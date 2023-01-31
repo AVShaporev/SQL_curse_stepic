@@ -12,7 +12,21 @@ with connect(
     database='store'
 ) as connection:
     my_query = '''
-
+        SELECT good.name as good_name FROM good
+            INNER JOIN category_has_good as chd
+                ON chd.good_id = good.id
+            INNER JOIN category as cat
+                ON cat.id = chd.category_id
+                AND cat.name = 'Cakes'
+        UNION
+        SELECT good.name as good_name FROM good
+            INNER JOIN sale_has_good as shd
+                ON shd.good_id = good.id
+            INNER JOIN sale
+                ON sale.id = shd.sale_id
+            INNER JOIN status
+                ON status.id = sale.status_id
+                AND status.name = 'delivering';
     '''
     with connection.cursor() as cursor:
         cursor.execute(my_query)
